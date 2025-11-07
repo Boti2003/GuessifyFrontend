@@ -75,7 +75,7 @@ export function LobbyListPage() {
                   placeholder="#Enter connection code"
                />
                <button
-                  className="btn btn-accent"
+                  className="btn btn-accent mb-2"
                   disabled={
                      connectionCode.trim() === "" || playerName.trim() === ""
                   }
@@ -86,10 +86,10 @@ export function LobbyListPage() {
                   Join lobby with code
                </button>
                {joinStatus === JoinStatus.LOBBY_NOT_FOUND && (
-                  <p style={"color:red;"}>Lobby not found with code!</p>
+                  <p className="text-error">Lobby not found with code!</p>
                )}
                {joinStatus === JoinStatus.LOBBY_FULL && (
-                  <p style={"color:red;"}>Lobby you try to join is full!</p>
+                  <p className="text-error">Lobby you try to join is full!</p>
                )}
             </div>
          </div>

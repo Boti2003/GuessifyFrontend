@@ -18,7 +18,7 @@ export function MainPage() {
       <div className="h-full w-full grid place-items-center">
          {applicationState?.applicationPage === ApplicationPage.MAIN_PAGE && (
             <div className=" grid grid-cols-1 gap-4 place-items-center w-full">
-               <div className="text-4xl font-bold mb-5">
+               <div className="text-3xl md:text-4xl font-bold mb-5">
                   <h1>Welcome to Guessify!</h1>
                </div>
                <button
