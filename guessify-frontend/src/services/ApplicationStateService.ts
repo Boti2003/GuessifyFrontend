@@ -1,6 +1,7 @@
 import { ApplicationPage } from "../enums/application_page.enum";
 import { ApplicationStatus } from "../enums/application_status.enum";
 import { UserMode } from "../enums/user_mode.enum";
+import { UserType } from "../enums/user_type.enum";
 import { ApplicationState } from "../models/application_state.model";
 
 class ApplicationStateService {
@@ -63,6 +64,16 @@ class ApplicationStateService {
          };
       }
 
+      this.notifyListeners();
+   }
+
+   public setUserType(newType: UserType): void {
+      if (newType !== undefined) {
+         this.applicationState = {
+            ...this.applicationState,
+            userType: newType,
+         };
+      }
       this.notifyListeners();
    }
 }

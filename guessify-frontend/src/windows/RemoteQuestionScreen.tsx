@@ -3,6 +3,7 @@ import { useGames } from "../hooks/useGames";
 import { usePlayers } from "../hooks/usePlayers";
 import { gameService } from "../services/GameService";
 import { PlayerComponent } from "../components/PlayerComponent";
+import { PLayerListComponent } from "../components/PlayerListComponent";
 
 export function RemoteQuestionScreen() {
    const { actualRound, actualQuestion, isAnswerTime } = useGames();
@@ -44,12 +45,7 @@ export function RemoteQuestionScreen() {
                <div>
                   The correct answer was: {actualQuestion?.correctAnswer}
                </div>
-               {players.map((player) => (
-                  <PlayerComponent
-                     player={player}
-                     actualPlayer={player.id === actualPlayer?.id}
-                  />
-               ))}
+               <PLayerListComponent />
             </div>
          )}
          <audio controls ref={audioRef} />

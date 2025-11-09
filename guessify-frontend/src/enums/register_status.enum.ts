@@ -1,0 +1,4 @@
+export enum RegisterStatus {
+   SUCCESSFUL = "SUCCESSFUL",
+   WRONG_CREDENTIALS = "WRONG_CREDENTIALS",
+}

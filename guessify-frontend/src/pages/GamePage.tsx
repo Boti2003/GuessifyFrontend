@@ -1,4 +1,5 @@
 import { PlayerComponent } from "../components/PlayerComponent";
+import { PLayerListComponent } from "../components/PlayerListComponent";
 import { ApplicationStatus } from "../enums/application_status.enum";
 import { GameMode } from "../enums/game_mode.enum";
 import { UserMode } from "../enums/user_mode.enum";
@@ -17,7 +18,7 @@ export function GamePage() {
    const { actualGame, actualRound } = useGames();
    const applicationState = useApplicationState();
    return (
-      <div>
+      <div className="items-center">
          {actualGame?.mode === GameMode.LOCAL && (
             <div>
                {applicationState?.userMode === UserMode.HOST && (
@@ -39,9 +40,7 @@ export function GamePage() {
                            <ShowQuestionScreen />
                         </div>
                      )}
-                     {players.map((player) => (
-                        <PlayerComponent player={player} actualPlayer={false} />
-                     ))}
+                     <PLayerListComponent />
                   </div>
                )}
                {applicationState?.userMode === UserMode.PLAYER && (

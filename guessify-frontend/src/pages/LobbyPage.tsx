@@ -12,6 +12,7 @@ import { applicationStateService } from "../services/ApplicationStateService";
 import { categoryService } from "../services/CategoryService";
 import { gameService } from "../services/GameService";
 import { playerService } from "../services/PlayerService";
+import { PLayerListComponent } from "../components/PlayerListComponent";
 
 /*export type LobbyPageProps = {
    setPage: (window: ApplicationPage) => void;
@@ -25,7 +26,7 @@ export function LobbyPage() {
    const applicationState = useApplicationState();
 
    return (
-      <div>
+      <div className="place-items-center">
          <h1>Welcome to game lobby: {actualLobby?.name}</h1>
          {applicationState?.userMode === UserMode.HOST ? (
             <div>
@@ -38,9 +39,7 @@ export function LobbyPage() {
                      <h2>Join with this code: {actualLobby?.connectionCode}</h2>
                   )}
                <h2>Players in this lobby:</h2>
-               {players.map((player) => (
-                  <PlayerComponent player={player} />
-               ))}
+               <PLayerListComponent />
                {actualLobby?.gameMode === GameMode.REMOTE && (
                   <div>
                      <h3>Set your name as a player in the remote game: </h3>
@@ -55,6 +54,7 @@ export function LobbyPage() {
                   </div>
                )}
                <button
+                  className="btn btn-secondary mt-4"
                   onClick={(e) => {
                      playerService.setPlayer({
                         id: null,
@@ -79,13 +79,7 @@ export function LobbyPage() {
                   host to start the game.
                </p>
                <h2>Players in this lobby:</h2>
-               {players.map((player) =>
-                  player.id === actualPlayer?.id ? (
-                     <PlayerComponent player={player} actualPlayer={true} />
-                  ) : (
-                     <PlayerComponent player={player} />
-                  )
-               )}
+               <PLayerListComponent />
             </div>
          )}
       </div>

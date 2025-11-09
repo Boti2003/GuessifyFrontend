@@ -10,6 +10,7 @@ import { GamePage } from "./GamePage";
 import { HostDisconnectedPage } from "./HostDisconnectedPage";
 import { GameEndedPage } from "./GameEndedPage";
 import bootstrap from "bootstrap";
+import { authService } from "../services/AuthService";
 
 export function MainPage() {
    const applicationState = useApplicationState();
@@ -24,6 +25,17 @@ export function MainPage() {
                <button
                   className="w-1/2 md:w-1/5 btn btn-neutral"
                   //onClick={(e) => setActualPage()}
+                  onClick={async (e) => {
+                     /*await authService.registerUser(
+                        "kutya",
+                        "kutya2@gmail.com",
+                        "6789Jik?"
+                     );*/
+                     await authService.login(
+                        "natkay.pityus@gmail.com",
+                        "tokenRablo?"
+                     );
+                  }}
                >
                   Login
                </button>
