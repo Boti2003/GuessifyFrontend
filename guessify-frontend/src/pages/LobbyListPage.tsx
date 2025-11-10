@@ -12,6 +12,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { applicationStateService } from "../services/ApplicationStateService";
 import { BackButton } from "../components/BackButton";
+import { useApplicationState } from "../hooks/useApplicationState";
+import { UserType } from "../enums/user_type.enum";
+import { useActualUser } from "../hooks/useActualUser";
 
 /*export type LobbyListPageProps = {
    setPage: (page: ApplicationPage) => void;
@@ -20,27 +23,39 @@ import { BackButton } from "../components/BackButton";
 //flex flex-col gap-8
 
 export function LobbyListPage() {
-   const [playerName, setPlayerName] = useState<string>("");
+   const [playerName, setPlayerName] = useState<string>(null);
    const [connectionCode, setConnectionCode] = useState<string>("");
 
    const { lobbies, actualLobby, joinStatus } = useLobbies();
+   const applicationState = useApplicationState();
+   const actualUser = useActualUser();
    return (
-      <div className="p-8 items-center text-center flex flex-col md:border-5 md:border-double md:rounded-xl bg-base-200">
+      <div className="p-8 items-center text-center flex flex-col md:border-5 md:border-double md:rounded-xl bg-base-200 mt-15">
          <div className="place-self-start">
             <BackButton targetPage={ApplicationPage.MAIN_PAGE} />
          </div>
          <div>
             <h1 className="text-xl md:text-2xl font-bold mb-2">Join a game!</h1>
-            <h2 className="font-semibold my-1">Your name</h2>
-            <input
-               className="input input-secondary"
-               type="text"
-               value={playerName}
-               onChange={(e) => {
-                  setPlayerName(e.currentTarget.value);
-               }}
-               placeholder="Enter your name"
-            />
+            {applicationState?.userType === UserType.GUEST ? (
+               <div>
+                  <h2 className="font-semibold my-1">Your name</h2>
+                  <input
+                     className="input input-secondary"
+                     type="text"
+                     value={playerName}
+                     onChange={(e) => {
+                        setPlayerName(e.currentTarget.value);
+                     }}
+                     placeholder="Enter your name"
+                  />
+               </div>
+            ) : (
+               <div>
+                  <h2 className="font-semibold my-1">
+                     Hi {actualUser?.displayName}!
+                  </h2>
+               </div>
+            )}
          </div>
          <div className="divider "></div>
 
@@ -54,6 +69,9 @@ export function LobbyListPage() {
                            <LobbyComponent
                               lobby={lobby}
                               playerName={playerName}
+                              isGuest={
+                                 applicationState?.userType === UserType.GUEST
+                              }
                            />
                         )
                   )}
@@ -77,7 +95,9 @@ export function LobbyListPage() {
                <button
                   className="btn btn-accent mb-2"
                   disabled={
-                     connectionCode.trim() === "" || playerName.trim() === ""
+                     (connectionCode.trim() === "" ||
+                        playerName.trim() === "") &&
+                     applicationState?.userType === UserType.GUEST
                   }
                   onClick={(e) => {
                      lobbyService.joinLobbyWithCode(connectionCode, playerName);

@@ -15,7 +15,9 @@ class CategoryService {
       chosenCategory: Category
    ) => void)[] = [];
 
-   constructor() {
+   constructor() {}
+
+   registerGameConnections() {
       hubService.gameConnection.on(
          "ReceiveVotingStarted",
          (categoryGroups: CategoryGroup[]) => {

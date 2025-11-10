@@ -18,7 +18,9 @@ class GameService {
    private actualQuestion: QuestionWithAnswer;
    private isAnswerTime: boolean = false;
 
-   constructor() {
+   constructor() {}
+
+   registerGameConnections() {
       hubService.gameConnection.on(
          "ReceiveNewRoundStarted",
          (newRound: GameRound) => {

@@ -4,18 +4,52 @@ import { RegisterStatus } from "../enums/register_status.enum";
 import { UserType } from "../enums/user_type.enum";
 import { User } from "../models/user.model";
 import { applicationStateService } from "./ApplicationStateService";
+import { hubService } from "./HubService";
 
 class AuthService {
    private actualUser: User;
 
-   constructor() {
+   constructor() {}
+
+   async initialize() {
       const accessToken = localStorage.getItem("accessToken");
-      if (accessToken) {
-         this.fetchCurrentUser(accessToken).then((user) => {
-            this.setUser(user);
+      console.log("Access Token on AuthService init:", accessToken);
+      if (!accessToken) {
+         this.getGuestToken().then((token) => {
+            this.setupForGuest(token);
          });
-      } else {
-         this.actualUser = null;
+      } else if (accessToken) {
+         this.validateToken(accessToken).then((isValid) => {
+            console.log("Is access token valid?", isValid);
+            if (localStorage.getItem("isGuest") === "true") {
+               console.log("User is a guest.");
+               if (!isValid) {
+                  this.getGuestToken().then((token) => {
+                     this.setupForGuest(token);
+                  });
+               }
+            } else {
+               console.log("User is a user.");
+               if (!isValid) {
+                  this.refreshToken().then((result: any) => {
+                     if (result.status === RefreshTokenStatus.REFRESHED) {
+                        this.setupForUser(
+                           result.accessToken,
+                           result.refreshToken
+                        );
+                     } else {
+                        this.getGuestToken().then((token) => {
+                           this.setupForGuest(token);
+                        });
+                     }
+                  });
+               } else {
+                  this.fetchCurrentUser(accessToken).then((user) => {
+                     this.setUser(user);
+                  });
+               }
+            }
+         });
       }
    }
 
@@ -48,7 +82,10 @@ class AuthService {
             }
          );
          console.log("Registration response:", response);
-
+         if (!response.ok) {
+            return RegisterStatus.WRONG_CREDENTIALS;
+         }
+         await this.login(email, password);
          return RegisterStatus.SUCCESSFUL;
       } catch (error) {
          console.error("Error during registration:", error);
@@ -57,15 +94,16 @@ class AuthService {
    }
 
    setUser(user: User) {
-      if (!user) {
-         applicationStateService.setUserType(UserType.GUEST);
+      if (user) {
+         this.actualUser = user;
+         this.notifyListeners();
+         applicationStateService.setUserType(UserType.REGISTERED);
+      } else {
          this.actualUser = null;
          this.notifyListeners();
+         applicationStateService.setUserType(UserType.GUEST);
          return;
       }
-      this.actualUser = user;
-      this.notifyListeners();
-      applicationStateService.setUserType(UserType.REGISTERED);
    }
 
    async fetchCurrentUser(accessToken: string): Promise<User> {
@@ -80,15 +118,8 @@ class AuthService {
                },
             }
          );
-         if (userResponse.status == 401) {
-            const refreshResult = await this.refreshToken();
-            if (refreshResult === RefreshTokenStatus.REFRESHED) {
-               const newAccessToken = localStorage.getItem("accessToken");
-               return this.fetchCurrentUser(newAccessToken);
-            } else {
-               return null;
-            }
-         } else if (!userResponse.ok) {
+
+         if (!userResponse.ok) {
             return null;
          } else if (userResponse.ok) {
             const userData = await userResponse.json();
@@ -100,7 +131,11 @@ class AuthService {
       }
    }
 
-   async refreshToken(): Promise<RefreshTokenStatus> {
+   async refreshToken(): Promise<{
+      status: RefreshTokenStatus;
+      accessToken?: string;
+      refreshToken?: string;
+   }> {
       try {
          const refreshToken = localStorage.getItem("refreshToken");
          const refreshResponse = await fetch(
@@ -114,16 +149,77 @@ class AuthService {
             }
          );
          if (!refreshResponse.ok) {
-            localStorage.setItem("accessToken", undefined);
-            localStorage.setItem("refreshToken", undefined);
-            return RefreshTokenStatus.FAILED;
+            return {
+               status: RefreshTokenStatus.FAILED,
+               accessToken: null,
+               refreshToken: null,
+            };
          }
          const res = await refreshResponse.json();
-         localStorage.setItem("accessToken", res.accessToken);
-         localStorage.setItem("refreshToken", res.refreshToken);
-         return RefreshTokenStatus.REFRESHED;
+
+         return {
+            status: RefreshTokenStatus.REFRESHED,
+            accessToken: res.accessToken,
+            refreshToken: res.refreshToken,
+         };
       } catch (error) {
          console.error("Error during token refresh:", error);
+      }
+   }
+
+   async setupForUser(accessToken: string, refreshToken: string) {
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("isGuest", "false");
+      const user = await this.fetchCurrentUser(accessToken);
+      this.setUser(user);
+   }
+
+   setupForGuest(accessToken: string) {
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("isGuest", "true");
+      localStorage.removeItem("refreshToken");
+      this.setUser(null);
+   }
+
+   async getGuestToken(): Promise<string> {
+      try {
+         const response = await fetch(
+            `https://localhost:7213/api/auth/guest-token`,
+            {
+               method: "GET",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+            }
+         );
+         if (response.status !== 200) {
+            throw new Error("Failed to fetch guest token");
+         }
+         const res = await response.json();
+         return res.accessToken;
+      } catch (error) {
+         console.error("Error fetching guest token:", error);
+         return null;
+      }
+   }
+
+   async validateToken(accessToken: string): Promise<boolean> {
+      try {
+         const response = await fetch(
+            `https://localhost:7213/api/auth/validate-token`,
+            {
+               method: "GET",
+               headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  Accept: "application/json",
+               },
+            }
+         );
+         return response.ok;
+      } catch (error) {
+         console.error("Error validating token:", error);
+         return false;
       }
    }
 
@@ -144,15 +240,47 @@ class AuthService {
          }
          console.log("Login response:", loginResponse);
          const res = await loginResponse.json();
-         localStorage.setItem("accessToken", res.accessToken);
-         localStorage.setItem("refreshToken", res.refreshToken);
-         const user = await this.fetchCurrentUser(res.accessToken);
-         this.setUser(user);
+         await this.setupForUser(res.accessToken, res.refreshToken);
+         await hubService.reconnectLobbyHub();
+         await hubService.reconnectGameHub();
          return LoginStatus.SUCCESSFUL;
       } catch (error) {
          console.error("Error during login:", error);
          return LoginStatus.AUTHENTICATION_FAILED;
       }
+   }
+
+   async logout() {
+      const refreshToken = localStorage.getItem("refreshToken");
+      const response = await fetch(`https://localhost:7213/api/auth/logout`, {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.getAccessToken()}`,
+         },
+         body: JSON.stringify({
+            refreshToken,
+         }),
+      });
+      if (response.ok) {
+         console.log("Logout successful on server.");
+         const accessToken = await this.getGuestToken();
+         this.setupForGuest(accessToken);
+         await hubService.reconnectLobbyHub();
+         await hubService.reconnectGameHub();
+      }
+   }
+
+   getAccessToken(): string {
+      let accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+         return null;
+      }
+      return accessToken;
+   }
+
+   getActualUser(): User {
+      return this.actualUser;
    }
 }
 

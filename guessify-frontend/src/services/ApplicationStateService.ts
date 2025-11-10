@@ -13,6 +13,7 @@ class ApplicationStateService {
    constructor() {
       this.applicationState = {
          userMode: null,
+         userType: UserType.GUEST,
          applicationPage: ApplicationPage.MAIN_PAGE,
          applicationStatus: null,
       };
@@ -33,10 +34,10 @@ class ApplicationStateService {
       );
    }
 
-   public getApplicationState(): ApplicationState {
+   getApplicationState(): ApplicationState {
       return this.applicationState;
    }
-   public setUserMode(newMode: UserMode): void {
+   setUserMode(newMode: UserMode): void {
       if (newMode !== undefined) {
          this.applicationState = {
             ...this.applicationState,
@@ -46,7 +47,7 @@ class ApplicationStateService {
 
       this.notifyListeners();
    }
-   public setApplicationStatus(newStatus: ApplicationStatus): void {
+   setApplicationStatus(newStatus: ApplicationStatus): void {
       if (newStatus !== undefined) {
          this.applicationState = {
             ...this.applicationState,
@@ -56,7 +57,7 @@ class ApplicationStateService {
 
       this.notifyListeners();
    }
-   public setApplicationPage(newPage: ApplicationPage): void {
+   setApplicationPage(newPage: ApplicationPage): void {
       if (newPage !== undefined) {
          this.applicationState = {
             ...this.applicationState,
@@ -67,7 +68,7 @@ class ApplicationStateService {
       this.notifyListeners();
    }
 
-   public setUserType(newType: UserType): void {
+   setUserType(newType: UserType): void {
       if (newType !== undefined) {
          this.applicationState = {
             ...this.applicationState,

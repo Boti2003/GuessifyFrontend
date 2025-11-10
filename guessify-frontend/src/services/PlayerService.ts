@@ -1,6 +1,7 @@
 import { ApplicationPage } from "../enums/application_page.enum";
 import { ApplicationStatus } from "../enums/application_status.enum";
 import { GameMode } from "../enums/game_mode.enum";
+import { UserType } from "../enums/user_type.enum";
 import { Game } from "../models/game.model";
 import { Player } from "../models/player.model";
 import { applicationStateService } from "./ApplicationStateService";
@@ -17,7 +18,22 @@ class PlayerService {
       actualPlayer: Player
    ) => void)[] = [];
 
-   constructor() {
+   constructor() {}
+
+   registerGameConnections() {
+      hubService.gameConnection.on(
+         "ReceivePlayersInGame",
+         (players: Player[]) => {
+            console.log("Received players in game:", players);
+            console.log("Current player ID:", this.actualPlayer?.id);
+            this.players = [...players];
+            console.log("Players in game updated:", this.players);
+            this.notifyListeners();
+         }
+      );
+   }
+
+   registerLobbyConnections() {
       hubService.lobbyConnection.on(
          "ReceivePlayersInLobby",
          (players: Player[]) => {
@@ -35,11 +51,13 @@ class PlayerService {
                "Received request to connect to game with ID:",
                game.id
             );
+            const nameRequired =
+               this.actualPlayer ||
+               applicationStateService.getApplicationState()?.userType ===
+                  UserType.REGISTERED;
             if (
-               (this.actualPlayer &&
-                  !this.isHost &&
-                  game.mode === GameMode.LOCAL) ||
-               (game.mode === GameMode.REMOTE && this.actualPlayer)
+               (nameRequired && !this.isHost && game.mode === GameMode.LOCAL) ||
+               (game.mode === GameMode.REMOTE && nameRequired)
             ) {
                console.log(
                   "Sent request to join game as player:",
@@ -48,7 +66,7 @@ class PlayerService {
                gameService.setGame(game);
                const player = await hubService.gameConnection.invoke(
                   "JoinGame",
-                  this.actualPlayer.name,
+                  this.actualPlayer?.name,
                   game.id
                );
 
@@ -63,16 +81,6 @@ class PlayerService {
                   ApplicationStatus.IN_GAME
                );
             }
-         }
-      );
-      hubService.gameConnection.on(
-         "ReceivePlayersInGame",
-         (players: Player[]) => {
-            console.log("Received players in game:", players);
-            console.log("Current player ID:", this.actualPlayer?.id);
-            this.players = [...players];
-            console.log("Players in game updated:", this.players);
-            this.notifyListeners();
          }
       );
    }

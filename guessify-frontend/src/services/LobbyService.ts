@@ -20,7 +20,14 @@ class LobbyService {
       joinStatus: JoinStatus
    ) => void)[] = [];
 
-   constructor() {
+   constructor() {}
+
+   initialize() {
+      this.registerLobbyConnections();
+      this.fetchLobbies();
+   }
+
+   registerLobbyConnections() {
       hubService.lobbyConnection.on("ReceiveLobbies", (lobbies: Lobby[]) => {
          this.lobbies = lobbies;
          console.log("Lobbies updated:", this.lobbies);
@@ -101,10 +108,10 @@ class LobbyService {
       this.notifyListeners();
    }
 
-   async joinLobby(lobbyId: string, playerName: string): Promise<JoinStatus> {
+   async joinLobby(lobbyId: string, playerName?: string): Promise<JoinStatus> {
       console.log("Attempting to join lobby with ID: " + lobbyId);
       const joinStatusDto = await hubService.lobbyConnection.invoke(
-         "JoinLobbyAsGuest",
+         "JoinLobby",
          lobbyId,
          playerName
       );

@@ -12,9 +12,14 @@ export type LobbyComponentProps = {
    setApplicationMode: (mode: ApplicationMode) => void;*/
    lobby: Lobby;
    playerName: string;
+   isGuest: boolean;
 };
 
-export function LobbyComponent({ lobby, playerName }: LobbyComponentProps) {
+export function LobbyComponent({
+   lobby,
+   playerName,
+   isGuest,
+}: LobbyComponentProps) {
    const { id, name, capacity, numberOfPlayers, status } = lobby;
    console.log("Rendering LobbyComponent for lobby ID: " + id);
    return (
@@ -29,8 +34,7 @@ export function LobbyComponent({ lobby, playerName }: LobbyComponentProps) {
                disabled={
                   status === LobbyStatus.IN_GAME ||
                   numberOfPlayers >= capacity ||
-                  playerName.trim() === "" ||
-                  !playerName
+                  ((playerName?.trim() === "" || !playerName) && isGuest)
                }
                onClick={(e) => {
                   lobbyService.joinLobby(id, playerName);

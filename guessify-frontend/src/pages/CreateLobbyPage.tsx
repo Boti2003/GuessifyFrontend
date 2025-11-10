@@ -22,7 +22,7 @@ export function CreateLobbyPage() {
    const [roundCount, setRoundCount] = useState<number>(5);
    const [gameMode, setGameMode] = useState<GameMode>(GameMode.LOCAL);
    return (
-      <div className="md:border-5 md:border-double md:rounded-xl p-5 grid grid-cols-1 gap-4 bg-base-200">
+      <div className="md:border-5 md:border-double md:rounded-xl p-5 grid grid-cols-1 gap-4 bg-base-200 mt-15 md:mt-5">
          <BackButton targetPage={ApplicationPage.MAIN_PAGE} />
          <h1 className="text-3xl md:text-4xl font-bold">
             Create a new lobby for game!

@@ -13,6 +13,8 @@ import { categoryService } from "../services/CategoryService";
 import { gameService } from "../services/GameService";
 import { playerService } from "../services/PlayerService";
 import { PLayerListComponent } from "../components/PlayerListComponent";
+import { UserType } from "../enums/user_type.enum";
+import { useActualUser } from "../hooks/useActualUser";
 
 /*export type LobbyPageProps = {
    setPage: (window: ApplicationPage) => void;
@@ -20,10 +22,11 @@ import { PLayerListComponent } from "../components/PlayerListComponent";
 };*/
 
 export function LobbyPage() {
-   const [playerName, setName] = useState<string>("");
+   const [playerName, setName] = useState<string>(null);
    const { players, actualPlayer } = usePlayers();
    const { lobbies, actualLobby } = useLobbies();
    const applicationState = useApplicationState();
+   const actualUser = useActualUser();
 
    return (
       <div className="place-items-center">
@@ -42,15 +45,26 @@ export function LobbyPage() {
                <PLayerListComponent />
                {actualLobby?.gameMode === GameMode.REMOTE && (
                   <div>
-                     <h3>Set your name as a player in the remote game: </h3>
-                     <input
-                        type="text"
-                        value={playerName}
-                        onChange={(e) => {
-                           setName(e.currentTarget.value);
-                        }}
-                        placeholder="Enter your name"
-                     />
+                     {applicationState?.userType === UserType.GUEST ? (
+                        <div>
+                           <h3>
+                              Set your name as a player in the remote game:
+                           </h3>
+                           <input
+                              type="text"
+                              value={playerName}
+                              onChange={(e) => {
+                                 setName(e.currentTarget.value);
+                              }}
+                              placeholder="Enter your name"
+                           />
+                        </div>
+                     ) : (
+                        <h3>
+                           Hi {actualUser?.displayName}! You will use this name
+                           in the game!
+                        </h3>
+                     )}
                   </div>
                )}
                <button
@@ -67,7 +81,14 @@ export function LobbyPage() {
                         actualLobby.totalRoundCount
                      );
                   }}
-                  disabled={players.length < 1} //|| playerName?.trim() === ""}
+                  disabled={
+                     (actualLobby?.gameMode === GameMode.REMOTE &&
+                        players.length < 1 &&
+                        (playerName?.trim() === "" || !playerName) &&
+                        applicationState?.userType === UserType.GUEST) ||
+                     (actualLobby?.gameMode === GameMode.LOCAL &&
+                        players.length < 2)
+                  }
                >
                   Start game
                </button>
