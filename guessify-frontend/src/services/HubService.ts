@@ -6,6 +6,7 @@ import { playerService } from "./PlayerService";
 import { categoryService } from "./CategoryService";
 import { gameService } from "./GameService";
 import { register } from "module";
+import { votingService } from "./VotingService";
 
 class HubService {
    lobbyConnection: any;
@@ -41,7 +42,7 @@ class HubService {
    }
 
    registerGameConnections() {
-      categoryService.registerGameConnections();
+      votingService.registerGameConnections();
       gameService.registerGameConnections();
       playerService.registerGameConnections();
    }

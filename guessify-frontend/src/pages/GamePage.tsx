@@ -1,3 +1,4 @@
+import { GameHeaderComponent } from "../components/GameHeaderComponent";
 import { PlayerComponent } from "../components/PlayerComponent";
 import { PLayerListComponent } from "../components/PlayerListComponent";
 import { ApplicationStatus } from "../enums/application_status.enum";
@@ -8,6 +9,7 @@ import { useGames } from "../hooks/useGames";
 import { usePlayers } from "../hooks/usePlayers";
 import { AnswerQuestionScreen } from "../windows/AnswerQuestionScreen";
 import { CategoryListWindow } from "../windows/CategoryGroupListWindow";
+import { LocalHostWindow } from "../windows/LocalHostWindow";
 import { RemoteQuestionScreen } from "../windows/RemoteQuestionScreen";
 import { ShowQuestionScreen } from "../windows/ShowQuestionScreen";
 import { VoteSubmittedPage } from "../windows/VoteSubmittedPage";
@@ -18,36 +20,15 @@ export function GamePage() {
    const { actualGame, actualRound } = useGames();
    const applicationState = useApplicationState();
    return (
-      <div className="items-center">
+      <div className="flex flex-col items-center w-3/4 overflow-x-hidden">
          {actualGame?.mode === GameMode.LOCAL && (
-            <div>
+            <div className="w-full">
                {applicationState?.userMode === UserMode.HOST && (
-                  <div>
-                     <h1>Game: {actualGame?.name}</h1>
-                     {applicationState?.applicationStatus ===
-                        ApplicationStatus.IN_GAME && (
-                        <div>
-                           <p>
-                              Rounds: {actualRound?.roundNumber ?? "1"}/
-                              {actualGame?.totalRoundCount}
-                           </p>
-                           <CategoryListWindow />
-                        </div>
-                     )}
-                     {applicationState?.applicationStatus ===
-                        ApplicationStatus.GAME_ROUND_STARTED && (
-                        <div>
-                           <ShowQuestionScreen />
-                        </div>
-                     )}
-                     <PLayerListComponent />
-                  </div>
+                  <LocalHostWindow />
                )}
+
                {applicationState?.userMode === UserMode.PLAYER && (
-                  <div>
-                     <h1>Game: {actualGame?.name}</h1>
-                     <AnswerQuestionScreen />
-                  </div>
+                  <AnswerQuestionScreen />
                )}
             </div>
          )}

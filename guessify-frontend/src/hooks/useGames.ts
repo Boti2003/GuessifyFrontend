@@ -9,6 +9,7 @@ import { Question, QuestionWithAnswer } from "../models/question.model";
 export function useGames() {
    const [actualGame, setActualGame] = useState<Game | null>(null);
    const [actualRound, setActualRound] = useState<GameRound | null>(null);
+   const [actualRoundNumber, setActualRoundNumber] = useState<number>(1);
    const [actualQuestion, setActualQuestion] =
       useState<QuestionWithAnswer | null>(null);
    const [isAnswerTime, setIsAnswerTime] = useState<boolean>(false);
@@ -17,6 +18,7 @@ export function useGames() {
       const listener = (
          actualGame: Game,
          actualRound: GameRound,
+         actualRoundNumber: number,
          actualQuestion: QuestionWithAnswer,
          isAnswerTime: boolean
       ) => {
@@ -24,6 +26,7 @@ export function useGames() {
          setActualGame(actualGame);
          setActualQuestion(actualQuestion);
          setIsAnswerTime(isAnswerTime);
+         setActualRoundNumber(actualRoundNumber);
       };
 
       gameService.addListener(listener);
@@ -31,5 +34,11 @@ export function useGames() {
       return () => gameService.removeListener(listener);
    }, []);
 
-   return { actualGame, actualRound, actualQuestion, isAnswerTime };
+   return {
+      actualGame,
+      actualRound,
+      actualRoundNumber,
+      actualQuestion,
+      isAnswerTime,
+   };
 }

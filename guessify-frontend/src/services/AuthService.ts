@@ -8,6 +8,7 @@ import { hubService } from "./HubService";
 
 class AuthService {
    private actualUser: User;
+   private users: User[] = [];
 
    constructor() {}
 
@@ -15,61 +16,57 @@ class AuthService {
       const accessToken = localStorage.getItem("accessToken");
       console.log("Access Token on AuthService init:", accessToken);
       if (!accessToken) {
-         this.getGuestToken().then((token) => {
-            this.setupForGuest(token);
-         });
+         const token = await this.getGuestToken();
+         this.setupForGuest(token);
       } else if (accessToken) {
-         this.validateToken(accessToken).then((isValid) => {
-            console.log("Is access token valid?", isValid);
-            if (localStorage.getItem("isGuest") === "true") {
-               console.log("User is a guest.");
-               if (!isValid) {
-                  this.getGuestToken().then((token) => {
-                     this.setupForGuest(token);
-                  });
+         const isValid = await this.validateToken(accessToken);
+         console.log("Is access token valid?", isValid);
+         if (localStorage.getItem("isGuest") === "true") {
+            console.log("User is a guest.");
+            if (!isValid) {
+               const token = await this.getGuestToken();
+               this.setupForGuest(token);
+            }
+         } else {
+            console.log("User is a user.");
+            if (!isValid) {
+               const result = await this.refreshToken();
+               if (result.status === RefreshTokenStatus.REFRESHED) {
+                  await this.setupForUser(
+                     result.accessToken,
+                     result.refreshToken
+                  );
+               } else {
+                  const token = await this.getGuestToken();
+                  this.setupForGuest(token);
                }
             } else {
-               console.log("User is a user.");
-               if (!isValid) {
-                  this.refreshToken().then((result: any) => {
-                     if (result.status === RefreshTokenStatus.REFRESHED) {
-                        this.setupForUser(
-                           result.accessToken,
-                           result.refreshToken
-                        );
-                     } else {
-                        this.getGuestToken().then((token) => {
-                           this.setupForGuest(token);
-                        });
-                     }
-                  });
-               } else {
-                  this.fetchCurrentUser(accessToken).then((user) => {
-                     this.setUser(user);
-                  });
-               }
+               await this.fetchCurrentUser();
             }
-         });
+         }
       }
    }
 
-   private componentListeners: ((actualUser: User) => void)[] = [];
+   private componentListeners: ((actualUser: User, users: User[]) => void)[] =
+      [];
 
-   addListener(listener: (actualUser: User) => void) {
-      listener(this.actualUser);
+   addListener(listener: (actualUser: User, users: User[]) => void) {
+      listener(this.actualUser, this.users);
       this.componentListeners.push(listener);
    }
 
-   removeListener(listener: (actualUser: User) => void) {
+   removeListener(listener: (actualUser: User, users: User[]) => void) {
       this.componentListeners = this.componentListeners.filter(
          (l) => l !== listener
       );
    }
    notifyListeners() {
-      this.componentListeners.forEach((listener) => listener(this.actualUser));
+      this.componentListeners.forEach((listener) =>
+         listener(this.actualUser, this.users)
+      );
    }
 
-   async registerUser(username: string, email: string, password: string) {
+   async registerUser(email: string, username: string, password: string) {
       try {
          const response = await fetch(
             `https://localhost:7213/api/auth/register`,
@@ -106,14 +103,15 @@ class AuthService {
       }
    }
 
-   async fetchCurrentUser(accessToken: string): Promise<User> {
+   async fetchCurrentUser(): Promise<User> {
       try {
+         const token = this.getAccessToken();
          const userResponse = await fetch(
             `https://localhost:7213/api/user/me`,
             {
                method: "GET",
                headers: {
-                  Authorization: `Bearer ${accessToken}`,
+                  Authorization: `Bearer ${token}`,
                   Accept: "application/json",
                },
             }
@@ -123,7 +121,16 @@ class AuthService {
             return null;
          } else if (userResponse.ok) {
             const userData = await userResponse.json();
-            return { displayName: userData.displayName, email: userData.email };
+            this.setUser({
+               displayName: userData.displayName,
+               sumScore: userData.sumScore,
+               rank: userData.rank,
+            });
+            return {
+               displayName: userData.displayName,
+               sumScore: userData.sumScore,
+               rank: userData.rank,
+            };
          }
       } catch (error) {
          console.error("Error fetching current user:", error);
@@ -171,8 +178,7 @@ class AuthService {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("isGuest", "false");
-      const user = await this.fetchCurrentUser(accessToken);
-      this.setUser(user);
+      await this.fetchCurrentUser();
    }
 
    setupForGuest(accessToken: string) {
@@ -247,6 +253,41 @@ class AuthService {
       } catch (error) {
          console.error("Error during login:", error);
          return LoginStatus.AUTHENTICATION_FAILED;
+      }
+   }
+
+   async getScoreboard(): Promise<User[]> {
+      try {
+         const accessToken = this.getAccessToken();
+         const response = await fetch(
+            `https://localhost:7213/api/user/scores`,
+            {
+               method: "GET",
+               headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  Accept: "application/json",
+               },
+            }
+         );
+         if (!response.ok) {
+            console.error("Failed to fetch scoreboard:", response.status);
+            return [];
+         }
+         const scoreboardData = await response.json();
+         const scoresBoard = scoreboardData.map(
+            (userData: any) =>
+               ({
+                  displayName: userData.displayName,
+                  sumScore: userData.sumScore,
+                  rank: userData.rank,
+               } as User)
+         );
+         this.users = scoresBoard;
+         this.notifyListeners();
+         return scoresBoard;
+      } catch (error) {
+         console.error("Error fetching scoreboard:", error);
+         return [];
       }
    }
 

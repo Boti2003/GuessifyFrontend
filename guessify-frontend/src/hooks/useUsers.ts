@@ -2,11 +2,13 @@ import { useEffect, useState } from "preact/hooks";
 import { authService } from "../services/AuthService";
 import { User } from "../models/user.model";
 
-export function useActualUser() {
+export function useUsers() {
    const [actualUser, setActualUser] = useState<User>();
+   const [users, setUsers] = useState<User[]>([]);
    useEffect(() => {
-      const listener = (actualUser: User) => {
+      const listener = (actualUser: User, users: User[]) => {
          setActualUser(actualUser);
+         setUsers(users);
       };
 
       authService.addListener(listener);
@@ -14,5 +16,5 @@ export function useActualUser() {
       return () => authService.removeListener(listener);
    }, []);
 
-   return actualUser;
+   return { actualUser, users };
 }

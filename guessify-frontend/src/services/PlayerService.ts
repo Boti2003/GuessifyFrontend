@@ -5,6 +5,7 @@ import { UserType } from "../enums/user_type.enum";
 import { Game } from "../models/game.model";
 import { Player } from "../models/player.model";
 import { applicationStateService } from "./ApplicationStateService";
+import { categoryService } from "./CategoryService";
 import { gameService } from "./GameService";
 import { hubService } from "./HubService";
 
@@ -69,7 +70,9 @@ class PlayerService {
                   this.actualPlayer?.name,
                   game.id
                );
+               categoryService.getCategoryGroups();
 
+               gameService.setActualRoundNumber(1);
                this.actualPlayer = player;
 
                console.log("Connected to game as player:", this.actualPlayer);
@@ -98,6 +101,11 @@ class PlayerService {
       this.componentListeners.forEach((listener) =>
          listener(this.players, this.actualPlayer)
       );
+   }
+
+   clearPlayers() {
+      this.players = [];
+      this.notifyListeners();
    }
 
    setPlayer(player: Player) {

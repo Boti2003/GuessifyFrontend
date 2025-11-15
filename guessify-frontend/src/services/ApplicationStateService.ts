@@ -15,7 +15,7 @@ class ApplicationStateService {
          userMode: null,
          userType: UserType.GUEST,
          applicationPage: ApplicationPage.MAIN_PAGE,
-         applicationStatus: null,
+         applicationStatus: ApplicationStatus.INIT,
       };
       this.notifyListeners();
    }

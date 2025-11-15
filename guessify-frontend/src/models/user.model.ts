@@ -1,4 +1,5 @@
 export type User = {
    displayName: string;
-   email: string;
+   sumScore?: number;
+   rank?: number;
 };

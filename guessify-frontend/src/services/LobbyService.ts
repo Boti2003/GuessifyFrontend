@@ -10,9 +10,9 @@ import { hubService } from "./HubService";
 import { playerService } from "./PlayerService";
 
 class LobbyService {
-   actualLobby: Lobby;
+   private actualLobby: Lobby;
    private joinStatus: JoinStatus;
-   lobbies: Lobby[] = [];
+   private lobbies: Lobby[] = [];
 
    private lobbyListeners: ((
       lobbies: Lobby[],
@@ -36,6 +36,7 @@ class LobbyService {
       hubService.lobbyConnection.on("ReceiveHostDisconnectedFromLobby", () => {
          console.log("Host disconnected from lobby.");
          this.actualLobby = null;
+         playerService.clearPlayers();
          this.notifyListeners();
          applicationStateService.setApplicationPage(
             ApplicationPage.HOST_DISCONNECTED_PAGE

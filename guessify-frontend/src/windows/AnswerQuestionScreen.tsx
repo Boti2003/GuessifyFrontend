@@ -8,19 +8,6 @@ export function AnswerQuestionScreen() {
    const { actualPlayer } = usePlayers();
    const [alreadyAnswered, setAlreadyAnswered] = useState(false);
 
-   /*const audioRef = useRef(null);
-
-   useEffect(() => {
-      if (audioRef.current || !isAnswerTime) {
-         audioRef.current.pause();
-      }
-      if (actualQuestion && isAnswerTime) {
-         audioRef.current.src = actualQuestion.previewUrl;
-         audioRef.current.load();
-         audioRef.current.play();
-      }
-   }, [actualQuestion, isAnswerTime]);*/
-
    useEffect(() => {
       setAlreadyAnswered(false);
    }, [actualQuestion]);
@@ -28,9 +15,13 @@ export function AnswerQuestionScreen() {
    return (
       <div>
          {isAnswerTime && !alreadyAnswered && (
-            <div>
-               {actualQuestion?.answerOptions.map((option) => (
+            <div
+               className=" grid grid-cols-2 items-center justify-center gap-6 text-center"
+               style={{ gridAutoRows: "1fr" }}
+            >
+               {actualQuestion?.question?.answerOptions?.map((option) => (
                   <button
+                     className="btn btn-neutral min-h-24 p-6 w-full h-full break-words text-wrap"
                      onClick={(e) => {
                         gameService.submitAnswer(option, actualPlayer.id);
                         setAlreadyAnswered(true);

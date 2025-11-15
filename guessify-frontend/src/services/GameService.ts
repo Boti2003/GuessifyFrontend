@@ -11,10 +11,12 @@ import { applicationStateService } from "./ApplicationStateService";
 import { categoryService } from "./CategoryService";
 import { hubService } from "./HubService";
 import { lobbyService } from "./LobbyService";
+import { playerService } from "./PlayerService";
 
 class GameService {
    private actualGame: Game;
    private actualRound: GameRound;
+   private actualRoundNumber: number;
    private actualQuestion: QuestionWithAnswer;
    private isAnswerTime: boolean = false;
 
@@ -28,6 +30,7 @@ class GameService {
             applicationStateService.setApplicationStatus(
                ApplicationStatus.GAME_ROUND_STARTED
             );
+            console.log("New round started:", newRound);
             this.notifyListeners();
          }
       );
@@ -49,19 +52,41 @@ class GameService {
             this.notifyListeners();
          }
       );
-      hubService.gameConnection.on("ReceiveEndGameRound", () => {
-         console.log("Game round ended.");
-         applicationStateService.setApplicationStatus(
-            ApplicationStatus.IN_GAME
-         );
-         this.notifyListeners();
-      });
+      hubService.gameConnection.on(
+         "ReceiveEndGameRound",
+         (nextRoundNumber: number) => {
+            console.log("Game round ended.");
+            this.actualRoundNumber = nextRoundNumber;
+            this.actualRound = null;
+            this.actualQuestion = null;
+            this.notifyListeners();
+            if (
+               ![
+                  ApplicationStatus.GAME_ABORTED_HOST_LEFT,
+                  ApplicationStatus.GAME_ABORTED_LACK_OF_PLAYERS,
+                  ApplicationStatus.GAME_FINISHED,
+               ].includes(
+                  applicationStateService.getApplicationState()
+                     .applicationStatus
+               )
+            ) {
+               applicationStateService.setApplicationStatus(
+                  ApplicationStatus.IN_GAME
+               );
+            }
+         }
+      );
       hubService.gameConnection.on("ReceiveGameEnd", (gameEnd: GameEnd) => {
          console.log("Game ended.");
          applicationStateService.setApplicationStatus(null);
          applicationStateService.setApplicationPage(
             ApplicationPage.GAME_ENDED_PAGE
          );
+         playerService.clearPlayers();
+         this.actualGame = null;
+         this.actualRound = null;
+         this.actualQuestion = null;
+         this.isAnswerTime = false;
          switch (gameEnd.reason) {
             case GameEndReason.ALL_ROUNDS_COMPLETED:
                applicationStateService.setApplicationStatus(
@@ -86,9 +111,15 @@ class GameService {
    private componentListeners: ((
       actualGame: Game,
       actualRound: GameRound,
+      actualRoundNumber: number,
       actualQuestion: Question,
       isAnswerTime: boolean
    ) => void)[] = [];
+
+   setActualRoundNumber(roundNumber: number) {
+      this.actualRoundNumber = roundNumber;
+      this.notifyListeners();
+   }
 
    async startGame(
       gameName: string,
@@ -100,15 +131,15 @@ class GameService {
          .invoke("StartGame", gameName, gameMode, totalRoundCount)
          .catch((err) => console.error("Invoke failed:", err));
       console.log("Game started with ID: " + this.actualGame.id);
+      this.actualRoundNumber = 1;
       await lobbyService.startGameAndAbandonLobby(this.actualGame.id);
       applicationStateService.setApplicationStatus(ApplicationStatus.IN_GAME);
       this.notifyListeners();
       applicationStateService.setApplicationPage(ApplicationPage.GAME_PAGE);
       if (gameMode === GameMode.REMOTE) {
          hubService.gameConnection.send("ManageRemoteGame", this.actualGame.id);
-      } else if (gameMode === GameMode.LOCAL) {
-         categoryService.getCategoryGroups();
       }
+      categoryService.getCategoryGroups();
    }
 
    async startNewRound(categoryId: string) {
@@ -124,7 +155,7 @@ class GameService {
          "SubmitAnswer",
          this.actualGame.id,
          this.actualRound.id,
-         this.actualQuestion.id,
+         this.actualQuestion.question.id,
          answer,
          playerId
       );
@@ -134,6 +165,7 @@ class GameService {
       listener: (
          actualGame: Game,
          actualRound: GameRound,
+         actualRoundNumber: number,
          actualQuestion: Question,
          isAnswerTime: boolean
       ) => void
@@ -141,6 +173,7 @@ class GameService {
       listener(
          this.actualGame,
          this.actualRound,
+         this.actualRoundNumber,
          this.actualQuestion,
          this.isAnswerTime
       );
@@ -150,6 +183,7 @@ class GameService {
       listener: (
          actualGame: Game,
          actualRound: GameRound,
+         actualRoundNumber: number,
          actualQuestion: Question,
          isAnswerTime: boolean
       ) => void
@@ -164,6 +198,7 @@ class GameService {
          listener(
             this.actualGame,
             this.actualRound,
+            this.actualRoundNumber,
             this.actualQuestion,
             this.isAnswerTime
          )

@@ -1,4 +1,5 @@
 export enum ApplicationStatus {
+   INIT = "INIT",
    IN_GAME = "IN_GAME",
    VOTING = "VOTING",
    VOTED = "VOTED",

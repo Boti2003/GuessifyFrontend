@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes:  caramellatte;
+  themes:  caramellatte, synthwave, aqua;
 }
 
 html, body, #app {

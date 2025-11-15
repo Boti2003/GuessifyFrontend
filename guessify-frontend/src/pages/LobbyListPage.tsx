@@ -14,7 +14,7 @@ import { applicationStateService } from "../services/ApplicationStateService";
 import { BackButton } from "../components/BackButton";
 import { useApplicationState } from "../hooks/useApplicationState";
 import { UserType } from "../enums/user_type.enum";
-import { useActualUser } from "../hooks/useActualUser";
+import { useUsers } from "../hooks/useUsers";
 
 /*export type LobbyListPageProps = {
    setPage: (page: ApplicationPage) => void;
@@ -28,11 +28,17 @@ export function LobbyListPage() {
 
    const { lobbies, actualLobby, joinStatus } = useLobbies();
    const applicationState = useApplicationState();
-   const actualUser = useActualUser();
+   const { actualUser, users } = useUsers();
    return (
-      <div className="p-8 items-center text-center flex flex-col md:border-5 md:border-double md:rounded-xl bg-base-200 mt-15">
+      <div className="p-8 items-center text-center flex flex-col md:border-5 md:border-double md:rounded-xl bg-base-200 mt-25 mb-10">
          <div className="place-self-start">
-            <BackButton targetPage={ApplicationPage.MAIN_PAGE} />
+            <BackButton
+               delegate={(e) =>
+                  applicationStateService.setApplicationPage(
+                     ApplicationPage.MAIN_PAGE
+                  )
+               }
+            />
          </div>
          <div>
             <h1 className="text-xl md:text-2xl font-bold mb-2">Join a game!</h1>
@@ -79,7 +85,7 @@ export function LobbyListPage() {
             </div>
 
             <div className="divider md:divider-horizontal">OR</div>
-            <div className="gap-4">
+            <div>
                <h1 className=" font-semibold">
                   Join a local lobby with a code shown on the host screen
                </h1>
@@ -95,8 +101,8 @@ export function LobbyListPage() {
                <button
                   className="btn btn-accent mb-2"
                   disabled={
-                     (connectionCode.trim() === "" ||
-                        playerName.trim() === "") &&
+                     (connectionCode?.trim() === "" ||
+                        playerName?.trim() === "") &&
                      applicationState?.userType === UserType.GUEST
                   }
                   onClick={(e) => {
@@ -110,6 +116,12 @@ export function LobbyListPage() {
                )}
                {joinStatus === JoinStatus.LOBBY_FULL && (
                   <p className="text-error">Lobby you try to join is full!</p>
+               )}
+               {joinStatus === JoinStatus.USER_ALREADY_IN_LOBBY && (
+                  <p className="text-error">You are already in this lobby!</p>
+               )}
+               {joinStatus === JoinStatus.USER_HOST_GAME && (
+                  <p className="text-error">You host this game!</p>
                )}
             </div>
          </div>

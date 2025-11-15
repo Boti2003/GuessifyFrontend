@@ -13,14 +13,18 @@ import bootstrap from "bootstrap";
 import { authService } from "../services/AuthService";
 import { NavBarComponent } from "../components/NavBarComponent";
 import { LoginPage } from "./LoginPage";
+import { LeaderBoardComponent } from "../components/LeaderBoardComponent";
+import { LeaderboardPage } from "./LeaderBoardPage";
+import { UserType } from "../enums/user_type.enum";
 
 export function MainPage() {
    const applicationState = useApplicationState();
 
    return (
-      <div className="h-full w-full grid place-items-center">
-         <NavBarComponent />
-
+      <div className="min-h-screen w-full grid place-items-center">
+         {![ApplicationPage.GAME_PAGE, ApplicationPage.LOBBY_PAGE].includes(
+            applicationState?.applicationPage
+         ) && <NavBarComponent />}
          {applicationState?.applicationPage === ApplicationPage.MAIN_PAGE && (
             <div className=" grid grid-cols-1 gap-4 place-items-center w-full">
                <div className="text-3xl md:text-4xl font-bold mb-5">
@@ -47,6 +51,20 @@ export function MainPage() {
                >
                   Join a game
                </button>
+               <button
+                  className="w-1/2 md:w-1/5 btn btn-neutral"
+                  onClick={(e) => {
+                     applicationStateService.setApplicationPage(
+                        ApplicationPage.LEADERBOARD_PAGE
+                     );
+                     if (applicationState?.userType !== UserType.GUEST) {
+                        authService.fetchCurrentUser();
+                     }
+                     authService.getScoreboard();
+                  }}
+               >
+                  Leaderboard
+               </button>
             </div>
          )}
          {applicationState?.applicationPage ===
@@ -66,6 +84,9 @@ export function MainPage() {
          {applicationState?.applicationPage === ApplicationPage.LOGIN_PAGE && (
             <LoginPage />
          )}
+
+         {applicationState?.applicationPage ===
+            ApplicationPage.LEADERBOARD_PAGE && <LeaderboardPage />}
       </div>
    );
 }

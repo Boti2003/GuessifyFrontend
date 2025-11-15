@@ -19,7 +19,7 @@ export function PlayerComponent({
    console.log("Rendering PlayerComponent for player ID: " + player?.id);
 
    return (
-      <div className="w-48 card card-border text-secondary-content bg-secondary text-center my-2 p-4">
+      <div className="min-w-20 md:min-w-35 card card-border text-secondary-content bg-secondary text-center p-4">
          {actualPlayer ? (
             <div>
                <h3>{player?.name} (You)</h3>

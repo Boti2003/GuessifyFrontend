@@ -9,16 +9,20 @@ export type CategoryComponentProps = {
 };
 
 export function CategoryComponent({ category }: CategoryComponentProps) {
-   //const { id, name, score } = player;
    console.log("Rendering CategoryComponent for category ID: " + category?.id);
-   const applicationState = useApplicationState();
+
    return (
-      <div>
+      <div className="flex items-center p-4 justify-center min-w-32 h-40 md:w-48 md:h-40 card card-border border-3 border-secondary bg-accent text-center font-semibold shadow-sm my-2 ">
          {category !== null && (
-            <div>
-               <h3>{category.name}</h3>
-               <button onClick={(e) => gameService.startNewRound(category.id)}>
-                  Select Category
+            <div className="flex flex-col gap-4 items-center">
+               <h3 className="text-accent-content backdrop-blur-sm rounded-lg font-bold text-lg mb-5">
+                  {category.name}
+               </h3>
+               <button
+                  className="btn btn-neutral"
+                  onClick={(e) => gameService.startNewRound(category.id)}
+               >
+                  Start Round
                </button>
             </div>
          )}

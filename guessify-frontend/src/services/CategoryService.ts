@@ -17,28 +17,6 @@ class CategoryService {
 
    constructor() {}
 
-   registerGameConnections() {
-      hubService.gameConnection.on(
-         "ReceiveVotingStarted",
-         (categoryGroups: CategoryGroup[]) => {
-            applicationStateService.setApplicationStatus(
-               ApplicationStatus.VOTING
-            );
-            this.chosenCategory = null;
-            this.categoryGroups = categoryGroups;
-            this.notifyListeners();
-         }
-      );
-      hubService.gameConnection.on(
-         "ReceiveVotingEnded",
-         (chosenCategory: Category) => {
-            console.log("Voting ended. Chosen category:", chosenCategory);
-            this.chosenCategory = chosenCategory;
-            this.notifyListeners();
-         }
-      );
-   }
-
    submitVote(categoryId: string) {
       console.log("Submitting vote for category ID:", categoryId);
       console.log("Current game ID:", gameService.getGame().id);
