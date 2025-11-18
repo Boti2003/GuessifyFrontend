@@ -1,3 +1,4 @@
+import { useEffect, useState } from "preact/hooks";
 import { LeaderBoardComponent } from "../components/LeaderBoardComponent";
 import { PlayerLeaderBoardComponent } from "../components/PlayerLeaderBoardComponent";
 import { PodiumComponent } from "../components/PodiumComponent";
@@ -10,14 +11,30 @@ import { applicationStateService } from "../services/ApplicationStateService";
 export function GameEndedPage() {
    const state = useApplicationState();
    const { players } = usePlayers();
+   const [topPlayers, setTopPlayers] = useState([]);
+   const [remainingPlayers, setRemainingPlayers] = useState([]);
 
-   const sortedPlayers = players.sort((a, b) => b.score - a.score);
-   const topPlayers = sortedPlayers?.slice(0, 3)?.map((player, index) => {
-      return { displayName: player.name, score: player.score, rank: index + 1 };
-   });
-   const remainingPlayers = sortedPlayers?.slice(3).map((player, index) => {
-      return { displayName: player.name, score: player.score, rank: index + 4 };
-   });
+   useEffect(() => {
+      const sortedPlayers = players.sort((a, b) => b.score - a.score);
+      setTopPlayers(
+         sortedPlayers?.slice(0, 3)?.map((player, index) => {
+            return {
+               displayName: player.name,
+               score: player.score,
+               rank: index + 1,
+            };
+         })
+      );
+      setRemainingPlayers(
+         sortedPlayers?.slice(3).map((player, index) => {
+            return {
+               displayName: player.name,
+               score: player.score,
+               rank: index + 4,
+            };
+         })
+      );
+   }, [players]);
 
    return (
       <div class="flex flex-col items-center gap-6">

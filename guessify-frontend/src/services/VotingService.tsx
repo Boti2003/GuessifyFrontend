@@ -30,6 +30,9 @@ class VotingService {
          (chosenCategory: Category) => {
             console.log("Voting ended. Chosen category:", chosenCategory);
             categoryService.setChosenCategory(chosenCategory);
+            applicationStateService.setApplicationStatus(
+               ApplicationStatus.VOTED
+            );
             this.notifyListeners();
          }
       );

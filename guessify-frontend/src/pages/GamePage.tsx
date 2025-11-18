@@ -20,7 +20,7 @@ export function GamePage() {
    const { actualGame, actualRound } = useGames();
    const applicationState = useApplicationState();
    return (
-      <div className="flex flex-col items-center w-3/4 overflow-x-hidden">
+      <div className="flex flex-col items-center w-3/4 overflow-x-hidden my-10 ">
          {actualGame?.mode === GameMode.LOCAL && (
             <div className="w-full">
                {applicationState?.userMode === UserMode.HOST && (
