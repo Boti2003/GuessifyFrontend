@@ -48,6 +48,8 @@ export function CreateLobbyPage() {
          <input
             className="input input-secondary md:place-self-end"
             type="number"
+            min={2}
+            max={12}
             value={capacity}
             onChange={(e) => setCapacity(parseInt(e.currentTarget.value))}
          />
