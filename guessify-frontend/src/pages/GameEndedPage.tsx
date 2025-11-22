@@ -16,6 +16,7 @@ export function GameEndedPage() {
 
    useEffect(() => {
       const sortedPlayers = players.sort((a, b) => b.score - a.score);
+      console.log("Sorted players:", sortedPlayers);
       setTopPlayers(
          sortedPlayers?.slice(0, 3)?.map((player, index) => {
             return {
@@ -34,7 +35,7 @@ export function GameEndedPage() {
             };
          })
       );
-   }, [players]);
+   }, [players, state?.applicationStatus]);
 
    return (
       <div class="flex flex-col items-center gap-6">

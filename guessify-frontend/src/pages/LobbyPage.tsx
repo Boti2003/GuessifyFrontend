@@ -78,7 +78,7 @@ export function LobbyPage() {
                )}
 
                <button
-                  className="btn btn-secondary text-xl font-semibold"
+                  className="btn btn-secondary text-xl font-semibold p-5"
                   onClick={(e) => {
                      playerService.setPlayer({
                         id: null,

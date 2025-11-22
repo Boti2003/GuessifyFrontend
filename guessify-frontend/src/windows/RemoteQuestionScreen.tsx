@@ -14,16 +14,25 @@ export function RemoteQuestionScreen() {
    const audioRef = useRef(null);
 
    useEffect(() => {
-      if (audioRef.current || !isAnswerTime) {
-         audioRef.current.pause();
-      }
-      if (actualQuestion && isAnswerTime) {
+      if (audioRef.current && actualQuestion && isAnswerTime) {
          setAlreadyAnswered(false);
          audioRef.current.src = actualQuestion.question.previewUrl;
          audioRef.current.load();
          audioRef.current.play();
       }
-   }, [actualQuestion, isAnswerTime]);
+   }, [isAnswerTime, actualQuestion]);
+
+   useEffect(() => {
+      if (audioRef.current && !isAnswerTime) {
+         audioRef.current.pause();
+      }
+   }, [isAnswerTime]);
+
+   useEffect(() => {
+      if (audioRef.current && alreadyAnswered) {
+         audioRef.current.pause();
+      }
+   }, [alreadyAnswered]);
 
    return (
       <div className="w-full">
@@ -49,7 +58,12 @@ export function RemoteQuestionScreen() {
                </div>
             </div>
          )}
-         {!isAnswerTime && (
+         {isAnswerTime && alreadyAnswered && (
+            <h2 className="text-2xl text-center font-bold">
+               You already submitted your answer! Waiting for other players...
+            </h2>
+         )}
+         {!isAnswerTime && actualQuestion && (
             <div className="flex flex-col gap-4 items-center">
                <div className="text-xl font-semibold text-center">
                   The correct answer was:

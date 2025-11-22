@@ -89,6 +89,7 @@ class LobbyService {
          .invoke("CreateLobby", lobbyName, capacity, gameMode, totalRoundCount)
          .then((lobby: Lobby) => {
             this.actualLobby = lobby;
+            playerService.clearPlayers();
             console.log("Lobby created with ID: " + lobby);
             playerService.setIsHost(true);
             this.notifyListeners();
@@ -123,6 +124,7 @@ class LobbyService {
          this.notifyListeners();
          console.log("Joined lobby with ID: " + lobbyId);
          console.log("Assigned player ID: " + joinStatusDto.playerId);
+         playerService.clearPlayers();
          playerService.setPlayer(joinStatusDto.player);
 
          await hubService.lobbyConnection.invoke(
@@ -152,6 +154,7 @@ class LobbyService {
          );
          console.log("Joined lobby with ID: " + joinStatusDto.lobbyId);
          console.log("Assigned player ID: " + joinStatusDto.playerId);
+         playerService.clearPlayers();
          playerService.setPlayer(joinStatusDto.player);
 
          await hubService.lobbyConnection.invoke(

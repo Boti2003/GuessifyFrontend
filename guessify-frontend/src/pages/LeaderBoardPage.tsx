@@ -44,9 +44,11 @@ export function LeaderboardPage() {
                   </div>
                )}
             </div>
-            <LeaderBoardComponent
-               leaderBoardElements={userLeaderBoardElements}
-            />
+            {userLeaderBoardElements.length > 0 && (
+               <LeaderBoardComponent
+                  leaderBoardElements={userLeaderBoardElements}
+               />
+            )}
          </div>
       </div>
    );

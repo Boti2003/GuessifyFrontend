@@ -15,6 +15,7 @@ import { BackButton } from "../components/BackButton";
 import { useApplicationState } from "../hooks/useApplicationState";
 import { UserType } from "../enums/user_type.enum";
 import { useUsers } from "../hooks/useUsers";
+import { join } from "path";
 
 /*export type LobbyListPageProps = {
    setPage: (page: ApplicationPage) => void;
@@ -122,6 +123,11 @@ export function LobbyListPage() {
                )}
                {joinStatus === JoinStatus.USER_HOST_GAME && (
                   <p className="text-error">You host this game!</p>
+               )}
+               {joinStatus === JoinStatus.USERNAME_TAKEN && (
+                  <p className="text-error">
+                     Player with this name is already joined this game!
+                  </p>
                )}
             </div>
          </div>

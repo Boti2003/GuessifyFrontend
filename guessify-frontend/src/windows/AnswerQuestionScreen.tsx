@@ -32,6 +32,11 @@ export function AnswerQuestionScreen() {
                ))}
             </div>
          )}
+         {isAnswerTime && alreadyAnswered && (
+            <h2 className="text-2xl text-center font-bold">
+               You already submitted your answer! Waiting for other players...
+            </h2>
+         )}
       </div>
    );
 }

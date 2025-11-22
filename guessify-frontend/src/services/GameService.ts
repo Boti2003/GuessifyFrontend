@@ -82,7 +82,6 @@ class GameService {
          applicationStateService.setApplicationPage(
             ApplicationPage.GAME_ENDED_PAGE
          );
-         playerService.clearPlayers();
          this.actualGame = null;
          this.actualRound = null;
          this.actualQuestion = null;

@@ -172,7 +172,7 @@ export function LoginPage() {
                      Password
                   </label>
                   <input
-                     type="text"
+                     type="password"
                      className="input validator "
                      required
                      placeholder="Password"
@@ -191,13 +191,15 @@ export function LoginPage() {
                      At least one lowercase letter
                      <br />
                      At least one uppercase letter
+                     <br />
+                     At least one special character
                   </p>
 
                   <label for="confirm-password" className="label">
                      Confirm Password
                   </label>
                   <input
-                     type="text"
+                     type="password"
                      className="input validator "
                      required
                      placeholder="Password"
@@ -208,17 +210,7 @@ export function LoginPage() {
                      value={confirmPassword}
                      onInput={(e) => setConfirmPassword(e.currentTarget.value)}
                   />
-                  <p className="validator-hint hidden">
-                     Must be at least 8 characters, including
-                     <br />
-                     At least one number
-                     <br />
-                     At least one lowercase letter
-                     <br />
-                     At least one uppercase letter
-                     <br />
-                     At least one special character
-                  </p>
+
                   {authError === RegisterStatus.WRONG_CREDENTIALS && (
                      <p className="text-error">
                         Registration failed, please check your data and try
