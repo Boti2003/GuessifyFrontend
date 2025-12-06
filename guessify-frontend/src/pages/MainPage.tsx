@@ -1,21 +1,17 @@
-import { useState } from "preact/hooks";
+import { NavBarComponent } from "../components/NavBarComponent";
 import { ApplicationPage } from "../enums/application_page.enum";
-import { CreateLobbyPage } from "./CreateLobbyPage";
-import { ApplicationMode } from "../enums/application_mode.enum";
-import { LobbyListPage } from "./LobbyListPage";
-import { LobbyPage } from "./LobbyPage";
+import { UserType } from "../enums/user_type.enum";
 import { useApplicationState } from "../hooks/useApplicationState";
 import { applicationStateService } from "../services/ApplicationStateService";
+import { authService } from "../services/AuthService";
+import { CreateLobbyPage } from "./CreateLobbyPage";
+import { GameEndedPage } from "./GameEndedPage";
 import { GamePage } from "./GamePage";
 import { HostDisconnectedPage } from "./HostDisconnectedPage";
-import { GameEndedPage } from "./GameEndedPage";
-import bootstrap from "bootstrap";
-import { authService } from "../services/AuthService";
-import { NavBarComponent } from "../components/NavBarComponent";
-import { LoginPage } from "./LoginPage";
-import { LeaderBoardComponent } from "../components/LeaderBoardComponent";
 import { LeaderboardPage } from "./LeaderBoardPage";
-import { UserType } from "../enums/user_type.enum";
+import { LobbyListPage } from "./LobbyListPage";
+import { LobbyPage } from "./LobbyPage";
+import { LoginPage } from "./LoginPage";
 
 export function MainPage() {
    const applicationState = useApplicationState();

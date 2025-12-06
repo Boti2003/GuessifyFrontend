@@ -1,15 +1,10 @@
-import { ApplicationMode } from "../enums/application_mode.enum";
-import { ApplicationPage } from "../enums/application_page.enum";
 import { LobbyStatus } from "../enums/lobby_status.enum";
-import { UserMode } from "../enums/user_mode.enum";
+
 import { Lobby } from "../models/lobby.model";
-import { applicationStateService } from "../services/ApplicationStateService";
+
 import { lobbyService } from "../services/LobbyService";
 
 export type LobbyComponentProps = {
-   // Define props here if needed
-   /*setPage: (page: ApplicationPage) => void;
-   setApplicationMode: (mode: ApplicationMode) => void;*/
    lobby: Lobby;
    playerName: string;
    isGuest: boolean;

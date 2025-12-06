@@ -113,6 +113,10 @@ class PlayerService {
       this.notifyListeners();
    }
 
+   getPlayer(): Player {
+      return this.actualPlayer;
+   }
+
    setIsHost(isHost: boolean) {
       this.isHost = isHost;
       console.log("Player host status set to:", this.isHost);

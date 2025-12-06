@@ -2,7 +2,7 @@ import { useEffect, useRef } from "preact/hooks";
 import { useGames } from "../hooks/useGames";
 import { CounterComponent } from "../components/CounterComponent";
 
-export function ShowQuestionScreen() {
+export function ShowQuestionWindow() {
    const { actualQuestion, isAnswerTime } = useGames();
 
    const audioRef = useRef(null);

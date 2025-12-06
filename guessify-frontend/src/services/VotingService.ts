@@ -30,9 +30,21 @@ class VotingService {
          (chosenCategory: Category) => {
             console.log("Voting ended. Chosen category:", chosenCategory);
             categoryService.setChosenCategory(chosenCategory);
-            applicationStateService.setApplicationStatus(
-               ApplicationStatus.VOTED
-            );
+            if (
+               ![
+                  ApplicationStatus.GAME_ABORTED_HOST_LEFT,
+                  ApplicationStatus.GAME_ABORTED_LACK_OF_PLAYERS,
+                  ApplicationStatus.GAME_FINISHED,
+               ].includes(
+                  applicationStateService.getApplicationState()
+                     .applicationStatus
+               )
+            ) {
+               applicationStateService.setApplicationStatus(
+                  ApplicationStatus.VOTED
+               );
+            }
+
             this.notifyListeners();
          }
       );

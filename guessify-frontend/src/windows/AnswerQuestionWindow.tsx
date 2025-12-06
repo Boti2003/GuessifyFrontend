@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { useGames } from "../hooks/useGames";
 import { usePlayers } from "../hooks/usePlayers";
 import { gameService } from "../services/GameService";
 
-export function AnswerQuestionScreen() {
-   const { actualRound, actualQuestion, isAnswerTime } = useGames();
+export function AnswerQuestionWindow() {
+   const { actualQuestion, isAnswerTime } = useGames();
    const { actualPlayer } = usePlayers();
    const [alreadyAnswered, setAlreadyAnswered] = useState(false);
 

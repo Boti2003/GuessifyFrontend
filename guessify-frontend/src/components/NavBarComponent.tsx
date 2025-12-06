@@ -8,7 +8,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 export function NavBarComponent() {
    const applicationState = useApplicationState();
-   const { actualUser, users } = useUsers();
+   const { actualUser } = useUsers();
    return (
       <div className="navbar bg-base-200 shadow-sm fixed top-0 z-1">
          <div className="flex-1">

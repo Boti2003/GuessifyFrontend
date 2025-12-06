@@ -2,7 +2,7 @@ import { ApplicationPage } from "../enums/application_page.enum";
 import { ApplicationStatus } from "../enums/application_status.enum";
 import { GameEndReason } from "../enums/game_end_reason.enum";
 import { GameMode } from "../enums/game_mode.enum";
-import { GameStatus } from "../enums/game_status.enum";
+import { StartGameStatus } from "../enums/start_game_status.enum";
 import { Game } from "../models/game.model";
 import { GameEnd } from "../models/game_end.model";
 import { GameRound } from "../models/game_round.model";
@@ -11,7 +11,6 @@ import { applicationStateService } from "./ApplicationStateService";
 import { categoryService } from "./CategoryService";
 import { hubService } from "./HubService";
 import { lobbyService } from "./LobbyService";
-import { playerService } from "./PlayerService";
 
 class GameService {
    private actualGame: Game;
@@ -125,20 +124,28 @@ class GameService {
       gameMode: GameMode,
       totalRoundCount: number
    ) {
-      console.log("Starting game:", gameName, gameMode, totalRoundCount);
-      this.actualGame = await hubService.gameConnection
-         .invoke("StartGame", gameName, gameMode, totalRoundCount)
-         .catch((err) => console.error("Invoke failed:", err));
-      console.log("Game started with ID: " + this.actualGame.id);
-      this.actualRoundNumber = 1;
-      await lobbyService.startGameAndAbandonLobby(this.actualGame.id);
-      applicationStateService.setApplicationStatus(ApplicationStatus.IN_GAME);
-      this.notifyListeners();
-      applicationStateService.setApplicationPage(ApplicationPage.GAME_PAGE);
-      if (gameMode === GameMode.REMOTE) {
-         hubService.gameConnection.send("ManageRemoteGame", this.actualGame.id);
+      const gameStartStatus = await lobbyService.checkWhetherGameCanBeStarted();
+      if (gameStartStatus === StartGameStatus.GAME_CAN_BE_STARTED) {
+         console.log("Starting game:", gameName, gameMode, totalRoundCount);
+         this.actualGame = await hubService.gameConnection
+            .invoke("StartGame", gameName, gameMode, totalRoundCount)
+            .catch((err) => console.error("Invoke failed:", err));
+         console.log("Game started with ID: " + this.actualGame.id);
+         this.actualRoundNumber = 1;
+         await lobbyService.abandonLobby(this.actualGame.id);
+         applicationStateService.setApplicationStatus(
+            ApplicationStatus.IN_GAME
+         );
+         this.notifyListeners();
+         applicationStateService.setApplicationPage(ApplicationPage.GAME_PAGE);
+         if (gameMode === GameMode.REMOTE) {
+            hubService.gameConnection.send(
+               "ManageRemoteGame",
+               this.actualGame.id
+            );
+         }
+         categoryService.getCategoryGroups();
       }
-      categoryService.getCategoryGroups();
    }
 
    async startNewRound(categoryId: string) {

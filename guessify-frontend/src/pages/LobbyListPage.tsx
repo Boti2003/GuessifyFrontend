@@ -1,35 +1,23 @@
-import { useEffect, useState } from "preact/hooks";
-import { ApplicationMode } from "../enums/application_mode.enum";
-import { ApplicationPage } from "../enums/application_page.enum";
-import { Lobby } from "../models/lobby.model";
-import { playerService } from "../services/PlayerService";
-import { lobbyService } from "../services/LobbyService";
+import { useState } from "preact/hooks";
+import { BackButton } from "../components/BackButton";
 import { LobbyComponent } from "../components/LobbyComponent";
-import { useLobbies } from "../hooks/useLobbies";
+import { ApplicationPage } from "../enums/application_page.enum";
 import { GameMode } from "../enums/game_mode.enum";
 import { JoinStatus } from "../enums/join_status.enum";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { applicationStateService } from "../services/ApplicationStateService";
-import { BackButton } from "../components/BackButton";
-import { useApplicationState } from "../hooks/useApplicationState";
 import { UserType } from "../enums/user_type.enum";
+import { useApplicationState } from "../hooks/useApplicationState";
+import { useLobbies } from "../hooks/useLobbies";
 import { useUsers } from "../hooks/useUsers";
-import { join } from "path";
-
-/*export type LobbyListPageProps = {
-   setPage: (page: ApplicationPage) => void;
-   setApplicationMode: (mode: ApplicationMode) => void;
-};*/
-//flex flex-col gap-8
+import { applicationStateService } from "../services/ApplicationStateService";
+import { lobbyService } from "../services/LobbyService";
 
 export function LobbyListPage() {
    const [playerName, setPlayerName] = useState<string>(null);
    const [connectionCode, setConnectionCode] = useState<string>("");
 
-   const { lobbies, actualLobby, joinStatus } = useLobbies();
+   const { lobbies, joinStatus } = useLobbies();
    const applicationState = useApplicationState();
-   const { actualUser, users } = useUsers();
+   const { actualUser } = useUsers();
    return (
       <div className="p-8 items-center text-center flex flex-col md:border-5 md:border-double md:rounded-xl bg-base-200 mt-25 mb-10">
          <div className="place-self-start">

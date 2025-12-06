@@ -1,8 +1,4 @@
-import { ApplicationStatus } from "../enums/application_status.enum";
-import { useApplicationState } from "../hooks/useApplicationState";
-import { Category } from "../models/category.model";
 import { CategoryGroup } from "../models/category_group.model";
-import { Player } from "../models/player.model";
 
 export type CategoryGroupComponentProps = {
    categoryGroup: CategoryGroup;

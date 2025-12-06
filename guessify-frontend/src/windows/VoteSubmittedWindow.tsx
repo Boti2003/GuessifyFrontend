@@ -1,6 +1,6 @@
 import { useCategories } from "../hooks/useCategories";
 
-export function VoteSubmittedPage() {
+export function VoteSubmittedWindow() {
    const { actualCategory } = useCategories();
    return (
       <div className="flex flex-col items-center">

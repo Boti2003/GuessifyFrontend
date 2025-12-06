@@ -8,15 +8,6 @@ export function CategoryListWindow() {
    const { categoryGroups } = useCategories();
    const [groupId, setGroupId] = useState<string | null>(null);
 
-   /*const mockCategories = [
-      { id: "1", name: "Category 1" },
-      { id: "2", name: "Category 2" },
-      { id: "3", name: "Category 3" },
-      { id: "4", name: "Category 3" },
-      { id: "5", name: "Category 3" },
-      { id: "6", name: "Category 3" },
-   ];*/
-
    return (
       <div className="max-w-full w-full">
          {groupId === null ? (

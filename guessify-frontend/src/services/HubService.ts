@@ -1,17 +1,16 @@
 import * as signalR from "@microsoft/signalr";
 import { lobbyService } from "./LobbyService";
 import { authService } from "./AuthService";
-import { User } from "../models/user.model";
 import { playerService } from "./PlayerService";
-import { categoryService } from "./CategoryService";
 import { gameService } from "./GameService";
-import { register } from "module";
 import { votingService } from "./VotingService";
 
 class HubService {
    lobbyConnection: any;
    gameConnection: any;
-   constructor() {
+   constructor() {}
+
+   async initializeConnections() {
       authService.initialize().then(() => {
          this.lobbyConnection = new signalR.HubConnectionBuilder()
             .withUrl("https://localhost:7213/lobbyhub", {
@@ -46,27 +45,6 @@ class HubService {
       gameService.registerGameConnections();
       playerService.registerGameConnections();
    }
-
-   /*if (authService.getActualUser()) {
-            this.reconnectLobbyHub();
-            console.log("Reconnecting lobby hub for logged in user");
-         }
-         authService.addListener((actualUser: User) => {
-            console.log("AuthService listener triggered in HubService");
-            if (actualUser) {
-               console.log(
-                  "AuthService listener with user triggered in HubService",
-                  actualUser
-               );
-               this.reconnectLobbyHub();
-            } else {
-               console.log(
-                  "AuthService listener without triggered in HubService",
-                  actualUser
-               );
-               this.setLobbyHubToStartingPoint();
-            }
-         });*/
 
    async reconnectLobbyHub() {
       const token = authService.getAccessToken();

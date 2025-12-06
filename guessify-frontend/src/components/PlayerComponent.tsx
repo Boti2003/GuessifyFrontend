@@ -1,7 +1,3 @@
-import { ApplicationMode } from "../enums/application_mode.enum";
-import { ApplicationPage } from "../enums/application_page.enum";
-import { ApplicationStatus } from "../enums/application_status.enum";
-import { useApplicationState } from "../hooks/useApplicationState";
 import { Player } from "../models/player.model";
 
 export type LobbyComponentProps = {
@@ -15,7 +11,6 @@ export function PlayerComponent({
    actualPlayer,
    inGame,
 }: LobbyComponentProps) {
-   //const { id, name, score } = player;
    console.log("Rendering PlayerComponent for player ID: " + player?.id);
 
    return (

@@ -1,0 +1,4 @@
+export enum LobbyCreateStatus {
+   CREATED = "CREATED",
+   LOBBY_ALREADY_EXISTS_WITH_NAME = "LOBBY_ALREADY_EXISTS_WITH_NAME",
+}

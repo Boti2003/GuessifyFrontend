@@ -10,7 +10,7 @@ import { ApplicationStatus } from "../enums/application_status.enum";
 
 export function VotingWindow() {
    const { categoryGroups } = useCategories();
-   const { actualGame, actualRoundNumber, actualRound } = useGames();
+   const { actualGame, actualRoundNumber } = useGames();
    const [selectedCategoryId, setSelectedCategoryId] = useState("");
    const { votingTime } = useVoting();
    const applicationState = useApplicationState();

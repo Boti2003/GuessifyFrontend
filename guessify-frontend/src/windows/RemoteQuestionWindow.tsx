@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import { CounterComponent } from "../components/CounterComponent";
+import { PLayerListComponent } from "../components/PlayerListComponent";
 import { useGames } from "../hooks/useGames";
 import { usePlayers } from "../hooks/usePlayers";
 import { gameService } from "../services/GameService";
-import { PlayerComponent } from "../components/PlayerComponent";
-import { PLayerListComponent } from "../components/PlayerListComponent";
-import { CounterComponent } from "../components/CounterComponent";
 
-export function RemoteQuestionScreen() {
-   const { actualRound, actualQuestion, isAnswerTime } = useGames();
-   const { actualPlayer, players } = usePlayers();
+export function RemoteQuestionWindow() {
+   const { actualQuestion, isAnswerTime } = useGames();
+   const { actualPlayer } = usePlayers();
    const [alreadyAnswered, setAlreadyAnswered] = useState(false);
 
    const audioRef = useRef(null);

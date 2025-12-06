@@ -1,7 +1,6 @@
 import { ApplicationStatus } from "../enums/application_status.enum";
 import { Category } from "../models/category.model";
 import { CategoryGroup } from "../models/category_group.model";
-import { Player } from "../models/player.model";
 import { applicationStateService } from "./ApplicationStateService";
 import { gameService } from "./GameService";
 import { hubService } from "./HubService";

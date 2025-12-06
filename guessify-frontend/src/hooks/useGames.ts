@@ -1,10 +1,8 @@
 import { useEffect, useState } from "preact/hooks";
-import { Player } from "../models/player.model";
-import { playerService } from "../services/PlayerService";
 import { Game } from "../models/game.model";
 import { GameRound } from "../models/game_round.model";
 import { gameService } from "../services/GameService";
-import { Question, QuestionWithAnswer } from "../models/question.model";
+import { QuestionWithAnswer } from "../models/question.model";
 
 export function useGames() {
    const [actualGame, setActualGame] = useState<Game | null>(null);

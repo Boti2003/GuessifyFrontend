@@ -1,23 +1,17 @@
-import { GameHeaderComponent } from "../components/GameHeaderComponent";
-import { PlayerComponent } from "../components/PlayerComponent";
-import { PLayerListComponent } from "../components/PlayerListComponent";
 import { ApplicationStatus } from "../enums/application_status.enum";
 import { GameMode } from "../enums/game_mode.enum";
 import { UserMode } from "../enums/user_mode.enum";
 import { useApplicationState } from "../hooks/useApplicationState";
 import { useGames } from "../hooks/useGames";
 import { usePlayers } from "../hooks/usePlayers";
-import { AnswerQuestionScreen } from "../windows/AnswerQuestionScreen";
-import { CategoryListWindow } from "../windows/CategoryGroupListWindow";
+import { AnswerQuestionWindow } from "../windows/AnswerQuestionWindow";
 import { LocalHostWindow } from "../windows/LocalHostWindow";
-import { RemoteQuestionScreen } from "../windows/RemoteQuestionScreen";
-import { ShowQuestionScreen } from "../windows/ShowQuestionScreen";
-import { VoteSubmittedPage } from "../windows/VoteSubmittedPage";
+import { RemoteQuestionWindow } from "../windows/RemoteQuestionWindow";
+import { VoteSubmittedWindow } from "../windows/VoteSubmittedWindow";
 import { VotingWindow } from "../windows/VotingWindow";
 
 export function GamePage() {
-   const { players, actualPlayer } = usePlayers();
-   const { actualGame, actualRound } = useGames();
+   const { actualGame } = useGames();
    const applicationState = useApplicationState();
    return (
       <div className="flex flex-col items-center w-3/4 overflow-x-hidden my-10 ">
@@ -28,7 +22,7 @@ export function GamePage() {
                )}
 
                {applicationState?.userMode === UserMode.PLAYER && (
-                  <AnswerQuestionScreen />
+                  <AnswerQuestionWindow />
                )}
             </div>
          )}
@@ -43,13 +37,13 @@ export function GamePage() {
                {applicationState?.applicationStatus ===
                   ApplicationStatus.VOTED && (
                   <div>
-                     <VoteSubmittedPage />
+                     <VoteSubmittedWindow />
                   </div>
                )}
                {applicationState?.applicationStatus ===
                   ApplicationStatus.GAME_ROUND_STARTED && (
                   <div>
-                     <RemoteQuestionScreen />
+                     <RemoteQuestionWindow />
                   </div>
                )}
             </div>

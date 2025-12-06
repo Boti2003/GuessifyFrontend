@@ -1,26 +1,18 @@
 import { useState } from "preact/hooks";
-import { ApplicationMode } from "../enums/application_mode.enum";
-import { ApplicationPage } from "../enums/application_page.enum";
-import { hubService } from "../services/HubService";
-import { lobbyService } from "../services/LobbyService";
-import { useApplicationState } from "../hooks/useApplicationState";
-import { applicationStateService } from "../services/ApplicationStateService";
-import { UserMode } from "../enums/user_mode.enum";
-import { GameMode } from "../enums/game_mode.enum";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { BackButton } from "../components/BackButton";
-
-/*export type CreateLobbyPageProps = {
-   setPage: (window: ApplicationPage) => void;
-   setApplicationMode: (mode: ApplicationMode) => void;
-};*/
+import { ApplicationPage } from "../enums/application_page.enum";
+import { GameMode } from "../enums/game_mode.enum";
+import { LobbyCreateStatus } from "../enums/lobby_create_status.enum";
+import { useLobbies } from "../hooks/useLobbies";
+import { applicationStateService } from "../services/ApplicationStateService";
+import { lobbyService } from "../services/LobbyService";
 
 export function CreateLobbyPage() {
    const [lobbyName, setLobbyName] = useState<string>("");
    const [capacity, setCapacity] = useState<number>(4);
    const [roundCount, setRoundCount] = useState<number>(5);
    const [gameMode, setGameMode] = useState<GameMode>(GameMode.LOCAL);
+   const { createStatus } = useLobbies();
    return (
       <div className="md:border-5 md:border-double md:rounded-xl p-5 grid grid-cols-1 gap-4 bg-base-200 mt-25">
          <BackButton
@@ -62,6 +54,7 @@ export function CreateLobbyPage() {
             onChange={(e) => setRoundCount(parseInt(e.currentTarget.value))}
          >
             <option value={1}>1</option>
+            <option value={3}>3</option>
             <option value={5}>5</option>
             <option value={7}>7</option>
             <option value={9}>9</option>
@@ -114,6 +107,11 @@ export function CreateLobbyPage() {
          >
             Create
          </button>
+         {createStatus === LobbyCreateStatus.LOBBY_ALREADY_EXISTS_WITH_NAME && (
+            <p className="text-error">
+               Remote lobby already exists with this name, use another!
+            </p>
+         )}
       </div>
    );
 }

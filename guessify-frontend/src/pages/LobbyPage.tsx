@@ -1,32 +1,22 @@
 import { useState } from "preact/hooks";
-import { PlayerComponent } from "../components/PlayerComponent";
-import { ApplicationMode } from "../enums/application_mode.enum";
-import { ApplicationPage } from "../enums/application_page.enum";
+import { PLayerListComponent } from "../components/PlayerListComponent";
 import { GameMode } from "../enums/game_mode.enum";
+import { StartGameStatus } from "../enums/start_game_status.enum";
 import { UserMode } from "../enums/user_mode.enum";
+import { UserType } from "../enums/user_type.enum";
 import { useApplicationState } from "../hooks/useApplicationState";
 import { useLobbies } from "../hooks/useLobbies";
 import { usePlayers } from "../hooks/usePlayers";
-import { Lobby } from "../models/lobby.model";
-import { applicationStateService } from "../services/ApplicationStateService";
-import { categoryService } from "../services/CategoryService";
+import { useUsers } from "../hooks/useUsers";
 import { gameService } from "../services/GameService";
 import { playerService } from "../services/PlayerService";
-import { PLayerListComponent } from "../components/PlayerListComponent";
-import { UserType } from "../enums/user_type.enum";
-import { useUsers } from "../hooks/useUsers";
-
-/*export type LobbyPageProps = {
-   setPage: (window: ApplicationPage) => void;
-   applicationMode: ApplicationMode;
-};*/
 
 export function LobbyPage() {
    const [playerName, setName] = useState<string>(null);
    const { players, actualPlayer } = usePlayers();
-   const { lobbies, actualLobby } = useLobbies();
+   const { actualLobby, startGameStatus } = useLobbies();
    const applicationState = useApplicationState();
-   const { actualUser, users } = useUsers();
+   const { actualUser } = useUsers();
 
    return (
       <div className="flex flex-col gap-4 items-center bg-base-200 md:border-5 md:border-double md:rounded-xl p-8">
@@ -54,8 +44,8 @@ export function LobbyPage() {
                {actualLobby?.gameMode === GameMode.REMOTE && (
                   <div>
                      {applicationState?.userType === UserType.GUEST ? (
-                        <div>
-                           <h3>
+                        <div className="flex flex-col gap-4 items-center">
+                           <h3 className="text-center">
                               Set your name as a player in the remote game:
                            </h3>
                            <input
@@ -69,7 +59,7 @@ export function LobbyPage() {
                            />
                         </div>
                      ) : (
-                        <h3>
+                        <h3 className="text-center">
                            Hi {actualUser?.displayName}! You will use this name
                            in the game!
                         </h3>
@@ -103,6 +93,17 @@ export function LobbyPage() {
                >
                   Start game
                </button>
+               {startGameStatus === StartGameStatus.HOST_PLAYER_NAME_TAKEN && (
+                  <p className="text-error text-center">
+                     This name is already taken by another player, please choose
+                     another!
+                  </p>
+               )}
+               {startGameStatus === StartGameStatus.NOT_ENOUGH_PLAYERS && (
+                  <p className="text-error text-center">
+                     There are not enough players to start the game!
+                  </p>
+               )}
             </div>
          ) : (
             <div className="flex flex-col items-center">

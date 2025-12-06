@@ -1,6 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
 import { LeaderBoardComponent } from "../components/LeaderBoardComponent";
-import { PlayerLeaderBoardComponent } from "../components/PlayerLeaderBoardComponent";
 import { PodiumComponent } from "../components/PodiumComponent";
 import { ApplicationPage } from "../enums/application_page.enum";
 import { ApplicationStatus } from "../enums/application_status.enum";

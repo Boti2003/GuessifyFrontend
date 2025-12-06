@@ -1,22 +1,13 @@
-import { useState } from "preact/hooks";
 import { GameHeaderComponent } from "../components/GameHeaderComponent";
 import { PLayerListComponent } from "../components/PlayerListComponent";
 import { ApplicationStatus } from "../enums/application_status.enum";
 import { useApplicationState } from "../hooks/useApplicationState";
 import { useGames } from "../hooks/useGames";
-import { usePlayers } from "../hooks/usePlayers";
 import { CategoryListWindow } from "./CategoryGroupListWindow";
-import { ShowQuestionScreen } from "./ShowQuestionScreen";
-import { CounterComponent } from "../components/CounterComponent";
+import { ShowQuestionWindow } from "./ShowQuestionWindow";
 
 export function LocalHostWindow() {
-   const {
-      actualGame,
-      actualRound,
-      actualRoundNumber,
-      actualQuestion,
-      isAnswerTime,
-   } = useGames();
+   const { actualGame, actualRoundNumber } = useGames();
    const applicationState = useApplicationState();
 
    return (
@@ -30,7 +21,7 @@ export function LocalHostWindow() {
             <CategoryListWindow />
          )}
          {applicationState?.applicationStatus ===
-            ApplicationStatus.GAME_ROUND_STARTED && <ShowQuestionScreen />}
+            ApplicationStatus.GAME_ROUND_STARTED && <ShowQuestionWindow />}
          <div className="divider" />
          <PLayerListComponent />
       </div>
