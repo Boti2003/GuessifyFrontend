@@ -62,6 +62,7 @@ export function VotingWindow() {
                ))}
             </div>
          ))}
+
          <button
             className="btn btn-secondary w-3/4 md:w-1/2 mt-4 text-lg font-semibold"
             onClick={(e) => {

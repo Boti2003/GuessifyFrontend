@@ -66,7 +66,9 @@ export function GameEndedPage() {
                      ApplicationStatus.GAME_ABORTED_HOST_LEFT &&
                      "The game ended, because the host left the game."}
                </h1>
-               <p>Please return to the main menu.</p>
+               <p className="text-l md:text-xl text-center">
+                  Please return to the main menu.
+               </p>
             </div>
          )}
          <button
