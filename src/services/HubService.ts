@@ -4,6 +4,7 @@ import { authService } from "./AuthService";
 import { playerService } from "./PlayerService";
 import { gameService } from "./GameService";
 import { votingService } from "./VotingService";
+import { toastService } from "./ToastService";
 
 class HubService {
    lobbyConnection: any;
@@ -36,11 +37,19 @@ class HubService {
    }
 
    registerLobbyConnections() {
+      this.lobbyConnection.on("ExceptionThrown", (message: string) => {
+         console.error("Exception from server:", message);
+         toastService.showErrorToast("Unknown error occurred");
+      });
       lobbyService.initialize();
       playerService.registerLobbyConnections();
    }
 
    registerGameConnections() {
+      this.gameConnection.on("ExceptionThrown", (message: string) => {
+         console.error("Exception from server:", message);
+         toastService.showErrorToast("Unknown error occurred");
+      });
       votingService.registerGameConnections();
       gameService.registerGameConnections();
       playerService.registerGameConnections();

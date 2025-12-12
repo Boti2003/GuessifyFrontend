@@ -9,7 +9,6 @@ export function CategoryGroupComponent({
    categoryGroup,
    setGroupId,
 }: CategoryGroupComponentProps) {
-   //const { id, name, score } = player;
    console.log(
       "Rendering CategoryComponent for category ID: " + categoryGroup?.id
    );
