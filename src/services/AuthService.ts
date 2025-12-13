@@ -69,7 +69,7 @@ class AuthService {
    async registerUser(email: string, username: string, password: string) {
       try {
          const response = await fetch(
-            `${process.env.BACKEND_URL}/api/auth/register`,
+            `${import.meta.env.VITE_API_URL}/api/auth/register`,
             {
                method: "POST",
                headers: {
@@ -107,7 +107,7 @@ class AuthService {
       try {
          const token = this.getAccessToken();
          const userResponse = await fetch(
-            `${process.env.BACKEND_URL}/api/user/me`,
+            `${import.meta.env.VITE_API_URL}/api/user/me`,
             {
                method: "GET",
                headers: {
@@ -146,7 +146,7 @@ class AuthService {
       try {
          const refreshToken = localStorage.getItem("refreshToken");
          const refreshResponse = await fetch(
-            `${process.env.BACKEND_URL}/api/auth/refresh`,
+            `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
             {
                method: "POST",
                headers: {
@@ -191,7 +191,7 @@ class AuthService {
    async getGuestToken(): Promise<string> {
       try {
          const response = await fetch(
-            `${process.env.BACKEND_URL}/api/auth/guest-token`,
+            `${import.meta.env.VITE_API_URL}/api/auth/guest-token`,
             {
                method: "GET",
                headers: {
@@ -213,7 +213,7 @@ class AuthService {
    async validateToken(accessToken: string): Promise<boolean> {
       try {
          const response = await fetch(
-            `${process.env.BACKEND_URL}/api/auth/validate-token`,
+            `${import.meta.env.VITE_API_URL}/api/auth/validate-token`,
             {
                method: "GET",
                headers: {
@@ -232,7 +232,7 @@ class AuthService {
    async login(email: string, password: string) {
       try {
          const loginResponse = await fetch(
-            `${process.env.BACKEND_URL}/api/auth/login`,
+            `${import.meta.env.VITE_API_URL}/api/auth/login`,
             {
                method: "POST",
                headers: {
@@ -260,7 +260,7 @@ class AuthService {
       try {
          const accessToken = this.getAccessToken();
          const response = await fetch(
-            `${process.env.BACKEND_URL}/api/user/scores`,
+            `${import.meta.env.VITE_API_URL}/api/user/scores`,
             {
                method: "GET",
                headers: {
@@ -294,7 +294,7 @@ class AuthService {
    async logout() {
       const refreshToken = localStorage.getItem("refreshToken");
       const response = await fetch(
-         `${process.env.BACKEND_URL}/api/auth/logout`,
+         `${import.meta.env.VITE_API_URL}/api/auth/logout`,
          {
             method: "POST",
             headers: {
