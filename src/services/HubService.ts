@@ -14,13 +14,13 @@ class HubService {
    async initializeConnections() {
       authService.initialize().then(() => {
          this.lobbyConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7213/lobbyhub", {
+            .withUrl(`${process.env.BACKEND_URL}/lobbyhub`, {
                accessTokenFactory: () => authService.getAccessToken(),
             })
             .withAutomaticReconnect()
             .build();
          this.gameConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7213/gamehub", {
+            .withUrl(`${process.env.BACKEND_URL}/gamehub`, {
                accessTokenFactory: () => authService.getAccessToken(),
             })
             .withAutomaticReconnect()
@@ -61,7 +61,7 @@ class HubService {
          await this.lobbyConnection.stop();
 
          this.lobbyConnection = await new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7213/lobbyhub", {
+            .withUrl(`${process.env.BACKEND_URL}/lobbyhub`, {
                accessTokenFactory: () => authService.getAccessToken(),
             })
             .withAutomaticReconnect()
@@ -79,7 +79,7 @@ class HubService {
          await this.gameConnection.stop();
 
          this.gameConnection = await new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7213/gamehub", {
+            .withUrl(`${process.env.BACKEND_URL}/gamehub`, {
                accessTokenFactory: () => authService.getAccessToken(),
             })
             .withAutomaticReconnect()
@@ -94,7 +94,7 @@ class HubService {
    async setLobbyHubToStartingPoint() {
       await this.lobbyConnection.stop();
       this.lobbyConnection = await new signalR.HubConnectionBuilder()
-         .withUrl("https://localhost:7213/lobbyhub")
+         .withUrl(`${process.env.BACKEND_URL}/lobbyhub`)
          .build();
 
       await this.lobbyConnection

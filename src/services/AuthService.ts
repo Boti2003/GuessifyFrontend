@@ -69,7 +69,7 @@ class AuthService {
    async registerUser(email: string, username: string, password: string) {
       try {
          const response = await fetch(
-            `https://localhost:7213/api/auth/register`,
+            `${process.env.BACKEND_URL}/api/auth/register`,
             {
                method: "POST",
                headers: {
@@ -107,7 +107,7 @@ class AuthService {
       try {
          const token = this.getAccessToken();
          const userResponse = await fetch(
-            `https://localhost:7213/api/user/me`,
+            `${process.env.BACKEND_URL}/api/user/me`,
             {
                method: "GET",
                headers: {
@@ -146,7 +146,7 @@ class AuthService {
       try {
          const refreshToken = localStorage.getItem("refreshToken");
          const refreshResponse = await fetch(
-            `https://localhost:7213/api/auth/refresh`,
+            `${process.env.BACKEND_URL}/api/auth/refresh`,
             {
                method: "POST",
                headers: {
@@ -191,7 +191,7 @@ class AuthService {
    async getGuestToken(): Promise<string> {
       try {
          const response = await fetch(
-            `https://localhost:7213/api/auth/guest-token`,
+            `${process.env.BACKEND_URL}/api/auth/guest-token`,
             {
                method: "GET",
                headers: {
@@ -213,7 +213,7 @@ class AuthService {
    async validateToken(accessToken: string): Promise<boolean> {
       try {
          const response = await fetch(
-            `https://localhost:7213/api/auth/validate-token`,
+            `${process.env.BACKEND_URL}/api/auth/validate-token`,
             {
                method: "GET",
                headers: {
@@ -232,7 +232,7 @@ class AuthService {
    async login(email: string, password: string) {
       try {
          const loginResponse = await fetch(
-            `https://localhost:7213/api/auth/login`,
+            `${process.env.BACKEND_URL}/api/auth/login`,
             {
                method: "POST",
                headers: {
@@ -260,7 +260,7 @@ class AuthService {
       try {
          const accessToken = this.getAccessToken();
          const response = await fetch(
-            `https://localhost:7213/api/user/scores`,
+            `${process.env.BACKEND_URL}/api/user/scores`,
             {
                method: "GET",
                headers: {
@@ -293,16 +293,19 @@ class AuthService {
 
    async logout() {
       const refreshToken = localStorage.getItem("refreshToken");
-      const response = await fetch(`https://localhost:7213/api/auth/logout`, {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.getAccessToken()}`,
-         },
-         body: JSON.stringify({
-            refreshToken,
-         }),
-      });
+      const response = await fetch(
+         `${process.env.BACKEND_URL}/api/auth/logout`,
+         {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${this.getAccessToken()}`,
+            },
+            body: JSON.stringify({
+               refreshToken,
+            }),
+         }
+      );
       if (response.ok) {
          console.log("Logout successful on server.");
          const accessToken = await this.getGuestToken();
